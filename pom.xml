@@ -63,6 +63,7 @@
             <version>7.2.0</version> <!-- use latest -->
         </dependency>
     </dependencies>
+<<<<<<< HEAD
     <build>
         <plugins>
             <plugin>
@@ -95,3 +96,14 @@
         </plugins>
     </build>
 </project>
+=======
+         <build>
+                 <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-surefire-plugin</artifactId>
+           <version>3.0.0-M6</version>
+           </plugin>
+         </build>
+
+</project>
+>>>>>>> ef7a14e8339dd13e0a134dd4fb35fce786f31ac9
