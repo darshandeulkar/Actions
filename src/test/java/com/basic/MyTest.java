@@ -1,6 +1,8 @@
 package com.basic;
 
-import org.testng.annotations.Test;
+
+
+import org.junit.jupiter.api.Test;
 
 import static com.codeborne.selenide.Selenide.open;
 
