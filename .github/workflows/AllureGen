@@ -1,0 +1,44 @@
+name: Maven Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven
+
+      - name: Set up Allure commandline
+        uses: fescobar/allure-docker-service@v2.13.0
+        with:
+          allure-version: 2.25.0
+
+      - name: Run Maven tests with Allure
+        run: mvn clean test
+
+      - name: Generate Allure Report
+        run: |
+          mkdir -p allure-results
+          mvn io.qameta.allure:allure-maven:report
+
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: target/site/allure-maven-plugin
