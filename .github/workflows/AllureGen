@@ -1,44 +1,60 @@
-name: Maven Tests
-
+name: Maven with Allure Report
+ 
 on:
+
   workflow_dispatch:
-
+ 
 jobs:
-  build:
+
+  test:
+
     runs-on: ubuntu-latest
-
+ 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+    - name: Checkout code
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven
+      uses: actions/checkout@v4
+ 
+    - name: Set up Java
 
-      - name: Set up Allure commandline
-        uses: fescobar/allure-docker-service@v2.13.0
-        with:
-          allure-version: 2.25.0
+      uses: actions/setup-java@v4
 
-      - name: Run Maven tests with Allure
-        run: mvn clean test
+      with:
 
-      - name: Generate Allure Report
-        run: |
-          mkdir -p allure-results
-          mvn io.qameta.allure:allure-maven:report
+        java-version: '17'
 
-      - name: Upload Allure Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-report
-          path: target/site/allure-maven-plugin
+        distribution: 'temurin'
+ 
+    - name: Set up Allure CLI
+
+      uses: actions/setup-node@v4
+
+      with:
+
+        node-version: '20'
+
+    - run: npm install -g allure-commandline --save-dev
+ 
+    - name: Run Maven Tests
+
+      run: mvn clean test
+ 
+    - name: Generate Allure Report
+
+      run: |
+
+        mvn allure:report
+
+        allure generate target/site/allure-maven-plugin -o allure-report
+ 
+    - name: Upload Allure Report as Artifact
+
+      uses: actions/upload-artifact@v4
+
+      with:
+
+        name: allure-report
+
+        path: allure-report
+ 
